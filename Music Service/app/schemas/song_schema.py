@@ -19,7 +19,6 @@ class SongUpdate(BaseModel):
     date_released: datetime | None = None
     price: Decimal | None = Field(None, gt=0)
 
-
 class SongResponse(SongBase):
     id: int
     ref_no: str

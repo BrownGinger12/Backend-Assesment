@@ -1,0 +1,505 @@
+{
+  "info": {
+    "_postman_id": "9af1a0ec-30c5-4b1e-ac8f-cfa7e542fab0",
+    "name": "Backend Assessment",
+    "description": "These are the gateways or endpoints for the backend assessment",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41962454"
+  },
+  "item": [
+    {
+      "name": "Payment Gateways",
+      "item": [
+        {
+          "name": "Cheap Gateway",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-idempotency-key",
+                "value": "assadsad-sadasdsadaaasdasadsdsadasdsad",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"total_amount\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{payment_gateway}}/transactions/cheap",
+              "host": [
+                "{{payment_gateway}}"
+              ],
+              "path": [
+                "transactions",
+                "cheap"
+              ]
+            },
+            "description": "The cheap payment gateway accepts an idempotency key in the request header and is responsible for processing cheap payments. Submitting the same idempotency key more than once will return the original response instead of processing the payment again. Below is the payload required for this API."
+          },
+          "response": []
+        },
+        {
+          "name": "Expensive Gateway",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-idempotency-key",
+                "value": "assadsad-sadasdsadaaasdasadsdsadasd",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"total_amount\": 10\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{payment_gateway}}/transactions/expensive",
+              "host": [
+                "{{payment_gateway}}"
+              ],
+              "path": [
+                "transactions",
+                "expensive"
+              ]
+            },
+            "description": "The expensive payment gateway is similar to the cheap payment gateway and was created solely to simulate having two different payment gateways for demonstration purposes."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"success\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{payment_gateway}}/transactions/10",
+              "host": [
+                "{{payment_gateway}}"
+              ],
+              "path": [
+                "transactions",
+                "10"
+              ]
+            },
+            "description": "The update transaction endpoint simulates a transaction that either fails or succeeds. When a transaction is marked as successful, it will automatically trigger a webhook that adds the purchased songs into the owned songs table, making them available to the user."
+          },
+          "response": []
+        }
+      ],
+      "description": "These gateways are mock payment gateways that accept an idempotency key in the request header to prevent duplicate payments. Submitting the same idempotency key more than once will return the original response instead of processing the request again.EndFragment"
+    },
+    {
+      "name": "Song Transactions",
+      "item": [
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-idempotency-key",
+                "value": "sadsadasd-sadasdasdsasadsadadsad",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"song_ref_nos\": [\r\n        \"283e959d-01c6-4ab2-a38c-899bd1d13705\",\r\n        \"71ccf4ab-a21a-47f2-918f-e42cc9b67388\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{music_gateway}}/transaction-songs",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "transaction-songs"
+              ]
+            },
+            "description": "FragmentThe create transaction endpoint calculates the total amount of the songs to be purchased and routes the payment to the appropriate gateway based on the total price. If the total amount is $10 or above, the request will be sent to the expensive payment gateway. If the total amount is below $10, it will be sent to the cheap payment gateway. This endpoint also accepts an idempotency key in the request header to prevent duplicate transactions from being processed."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/transaction-songs/9",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "transaction-songs",
+                "9"
+              ]
+            },
+            "description": "The delete transaction endpoint deletes a transaction and all its associated records based on the provided transaction ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Transaction",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/transaction-songs/transaction/9",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "transaction-songs",
+                "transaction",
+                "9"
+              ]
+            },
+            "description": "The get transaction endpoint retrieves and returns all transactions that have been made."
+          },
+          "response": []
+        }
+      ],
+      "description": "The song transactions gateway handles the transaction logic specifically for purchasing songs, including determining which payment gateway will be used to process the payment."
+    },
+    {
+      "name": "Owned Music",
+      "item": [
+        {
+          "name": "Add songs to owned songs",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"transaction_id\": 9\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{music_gateway}}/owned-songs",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "owned-songs"
+              ]
+            },
+            "description": "This endpoint serves as the webhook that is triggered by the payment gateway upon a successful transaction. It takes the transaction ID, queries all the songs associated with that transaction, and automatically adds them to the user's owned music collection, making the purchased songs immediately available to the user."
+          },
+          "response": []
+        },
+        {
+          "name": "Get owned songs",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{music_gateway}}/owned-songs/",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "owned-songs",
+                ""
+              ]
+            },
+            "description": "This endpoint retrieves and returns all available songs in the catalog."
+          },
+          "response": []
+        },
+        {
+          "name": "Get owned songs by ref number",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{music_gateway}}/owned-songs/ref/283e959d-01c6-4ab2-a38c-899bd1d13705",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "owned-songs",
+                "ref",
+                "283e959d-01c6-4ab2-a38c-899bd1d13705"
+              ]
+            },
+            "description": "This endpoint returns the song corresponding to the reference number."
+          },
+          "response": []
+        }
+      ],
+      "description": "The owned music endpoints handle the ownership of songs after a successful transaction. Once a transaction has been marked as successful, the purchased songs are automatically added to the user's owned songs collection via a webhook. These endpoints allow users to view their owned songs and manage their music library, ensuring that only songs tied to a completed and successful transaction are accessible to the user."
+    },
+    {
+      "name": "Music",
+      "item": [
+        {
+          "name": "Get songs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/songs/ref/283e959d-01c6-4ab2-a38c-899bd1d13705",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "songs",
+                "ref",
+                "283e959d-01c6-4ab2-a38c-899bd1d13705"
+              ]
+            },
+            "description": "This API returns a song based on its reference number."
+          },
+          "response": []
+        },
+        {
+          "name": "Create song",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Blinding Lights 2\",\r\n  \"length\": 200,\r\n  \"date_released\": \"2019-11-29T00:00:00\",\r\n  \"price\": 1.99\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{music_gateway}}/songs",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "songs"
+              ]
+            },
+            "description": "This endpoint creates a new song. Below is the payload required for this endpoint."
+          },
+          "response": []
+        },
+        {
+          "name": "Get song by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/songs/id/1",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "songs",
+                "id",
+                "1"
+              ]
+            },
+            "description": "This endpoint returns the song corresponding to the provided ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get all songs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/songs/",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "songs",
+                ""
+              ]
+            },
+            "description": "This endpoint retrieves all songs in the database."
+          },
+          "response": []
+        },
+        {
+          "name": "Update song",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"test\",\r\n    \"length\": 200,\r\n    \"price\": 2.99\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{music_gateway}}/songs/1",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "songs",
+                "1"
+              ]
+            },
+            "description": "This endpoint updates a song based on the provided ID. The payload is similar to the create song endpoint, but you can omit fields that do not need to be updated."
+          },
+          "response": []
+        }
+      ],
+      "description": "These are the music endpoints, handling all CRUD operations for the music."
+    },
+    {
+      "name": "Playlist",
+      "item": [
+        {
+          "name": "Get playlist songs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{music_gateway}}/playlist/",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "playlist",
+                ""
+              ]
+            },
+            "description": "This endpoint returns the songs in the exact order they appear in the playlist."
+          },
+          "response": []
+        },
+        {
+          "name": "Add song to playlist",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"song_ref_no\": \"71ccf4ab-a21a-47f2-918f-e42cc9b67388\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{music_gateway}}/playlist/",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "playlist",
+                ""
+              ]
+            },
+            "description": "This endpoint adds a song to the playlist. It requires the song’s reference number as the payload. Only songs that the user owns can be added; unowned songs will be rejected."
+          },
+          "response": []
+        },
+        {
+          "name": "Shuffle playlist",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{music_gateway}}/playlist/shuffle",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "playlist",
+                "shuffle"
+              ]
+            },
+            "description": "This endpoint returns the playlist with songs in a shuffled order."
+          },
+          "response": []
+        },
+        {
+          "name": "Remove song to playlist",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{music_gateway}}/playlist/71ccf4ab-a21a-47f2-918f-e42cc9b67388",
+              "host": [
+                "{{music_gateway}}"
+              ],
+              "path": [
+                "playlist",
+                "71ccf4ab-a21a-47f2-918f-e42cc9b67388"
+              ]
+            },
+            "description": "This endpoint removes a song from the playlist."
+          },
+          "response": []
+        }
+      ],
+      "description": "These are the endpoints for managing playlists. All endpoints are linked to the user’s owned songs, meaning you cannot access or add songs to your playlist that you do not own."
+    }
+  ]
+}
